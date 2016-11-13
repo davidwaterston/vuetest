@@ -2,40 +2,46 @@
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     </head>
-    <body>
+    <body style="margin:15px">
 
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
 
     <div id="app">
-        <button @click="reverseList" class="btn">Reverse List</button>
-        <span v-if="canedit">
+        <button v-if="canEdit" @click="{{canEdit = false}}" class="btn">Filter Mode</button>
+        <button v-else @click="{{canEdit = true}}" class="btn">Edit Mode</button>
+        <span v-if="canEdit">
             <button @click="prependItem" class="btn">Prepend Item</button>
             <button @click="appendItem" class="btn">Append Item</button>
-            {{items.length}}
+            <button @click="reverseList" class="btn">Reverse List</button>
+        </span>
+        <span v-else>
+            {{filteredItems.length}} of {{items.length}}
+            </p>
+            <input type="text" v-model="filterString" placeholder="Filter" />
         </span>
         </p>
         <table v-if="items.length > 0" class="table table-striped" style="width:80%">
-            <tr :id="prefixedId(item.id)" :title="item.id" :key="item.id" v-for="(item, index) in items">
+            <tr :id="prefixedId(item.id)" :title="item.id" :key="item.id" v-for="(item, index) in filteredItems">
                 <td>
                     {{item.title}}
                 </td>
-                <td width="30px">
-                    <button v-if="index !== 0" @click="move(index, 'up')" class="btn">Move Up</button>
-                </td>
-                <td width="30px">
-                    <button v-if="index !== items.length - 1" @click="move(index, 'down')" class="btn">Move Down</button>
-                </td>
-                <td width="30px">
-                    <button v-if="canedit" @click="deleteItem(index)" class="btn">x</button>
-                </td>
+                <template v-if="canEdit">
+	                <td width="30px">
+	                    <button v-if="index !== 0" @click="move(index, 'up')" class="btn">Move Up</button>
+	                </td>
+	                <td width="30px">
+	                    <button v-if="index !== items.length - 1" @click="move(index, 'down')" class="btn">Move Down</button>
+	                </td>
+	                <td width="30px">
+	                    <button @click="deleteItem(index)" class="btn">x</button>
+	                </td>
+                </template>
             </tr>
         </table>
-
         <div v-else>
-            NONE
+            <span v-if="dataLoaded">NONE<span>
         </div>
-
         <input type="hidden" :value="itemsAsJSON">
     </div>
 
@@ -43,52 +49,65 @@
         var vm = new Vue({
             el: '#app',
             data: {
-                canedit: true,
+                dataLoaded: false,
+                canEdit: true,
+                filterString: '',
                 items: []
             },
             created: function() {
                 this.$http.get('https://jsonplaceholder.typicode.com/albums').then((response) => {
-                    this.items = response.body
+                    this.items = response.body;
+                    dataLoaded = true;
                   }, (response) => {
                     // error callback
                   });
             },
             computed: {
+                filteredItems: function() {
+                    var filterString = this.filterString.toLowerCase();
+                    return this.items.filter(function (item) {
+                        if (filterString.length < 3) {
+                            return true;
+                        } else {
+                            return item.title.toLowerCase().indexOf(filterString) + 1;
+                        }
+                    })
+                },
                 itemsAsJSON: function() {
-                    return JSON.stringify(this.items)
+                    return JSON.stringify(this.items);
                 }
             },
             watch: {
                 items: function () {
-                    console.log ('Change detected')
+                    console.log ('Change detected');
                 }
             },
             methods: {
                 appendItem: function() {
-                  var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000
-                  this.items.push({id: newId, title: 'New item ' + new Date()})
+                  var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000;
+                  this.items.push({id: newId, title: 'New item ' + new Date()});
                 },
                 prependItem: function() {
-                    var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000
-                    this.items.unshift({id: newId, title: 'New item ' + new Date()})
+                    var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000;
+                    this.items.unshift({id: newId, title: 'New item ' + new Date()});
                 },
                 deleteItem: function(index) {
-                    this.items.splice(index, 1)
+                    this.items.splice(index, 1);
                 },
                 reverseList: function() {
-                    this.items.reverse()
+                    this.items.reverse();
                 },
                 move: function(index, direction) {
                     var tempObj;
                     var offset;
                     if (direction === 'up') {
-                        offset = -1
+                        offset = -1;
                     } else {
-                        offset = 1
+                        offset = 1;
                     }
-                    tempObj = this.items[index + offset]
-                    this.items.splice(index + offset, 1, this.items[index])
-                    this.items.splice(index, 1, tempObj)
+                    tempObj = this.items[index + offset];
+                    this.items.splice(index + offset, 1, this.items[index]);
+                    this.items.splice(index, 1, tempObj);
                 },
                 prefixedId(id) {
                     var s = "000000000" + id;
@@ -99,10 +118,5 @@
             });
         </script>
 
-
-
     </body>
-
-
-
 </html>
