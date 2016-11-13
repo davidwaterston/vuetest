@@ -8,10 +8,10 @@
     <script src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
 
     <div id="app">
-        <button v-on:click="reverseList" class="btn">Reverse List</button>
+        <button @click="reverseList" class="btn">Reverse List</button>
         <span v-if="canedit">
-            <button v-on:click="prependItem" class="btn">Prepend Item</button>
-            <button v-on:click="appendItem" class="btn">Append Item</button>
+            <button @click="prependItem" class="btn">Prepend Item</button>
+            <button @click="appendItem" class="btn">Append Item</button>
             {{items.length}}
         </span>
         </p>
@@ -21,13 +21,13 @@
                     {{item.title}}
                 </td>
                 <td width="30px">
-                    <button v-if="index !== 0" v-on:click="move(index, 'up')" class="btn">Move Up</button>
+                    <button v-if="index !== 0" @click="move(index, 'up')" class="btn">Move Up</button>
                 </td>
                 <td width="30px">
-                    <button v-if="index !== items.length - 1" v-on:click="move(index, 'down')" class="btn">Move Down</button>
+                    <button v-if="index !== items.length - 1" @click="move(index, 'down')" class="btn">Move Down</button>
                 </td>
                 <td width="30px">
-                    <button v-if="canedit" v-on:click="deleteItem(index)" class="btn">x</button>
+                    <button v-if="canedit" @click="deleteItem(index)" class="btn">x</button>
                 </td>
             </tr>
         </table>
