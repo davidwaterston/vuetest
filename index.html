@@ -1,0 +1,108 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    </head>
+    <body>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
+
+    <div id="app">
+        <button v-on:click="reverseList" class="btn">Reverse List</button>
+        <span v-if="canedit">
+            <button v-on:click="prependItem" class="btn">Prepend Item</button>
+            <button v-on:click="appendItem" class="btn">Append Item</button>
+            {{items.length}}
+        </span>
+        </p>
+        <table v-if="items.length > 0" class="table table-striped" style="width:80%">
+            <tr :id="prefixedId(item.id)" :title="item.id" :key="item.id" v-for="(item, index) in items">
+                <td>
+                    {{item.title}}
+                </td>
+                <td width="30px">
+                    <button v-if="index !== 0" v-on:click="move(index, 'up')" class="btn">Move Up</button>
+                </td>
+                <td width="30px">
+                    <button v-if="index !== items.length - 1" v-on:click="move(index, 'down')" class="btn">Move Down</button>
+                </td>
+                <td width="30px">
+                    <button v-if="canedit" v-on:click="deleteItem(index)" class="btn">x</button>
+                </td>
+            </tr>
+        </table>
+
+        <div v-else>
+            NONE
+        </div>
+
+        <input type="hidden" :value="itemsAsJSON">
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                canedit: true,
+                items: []
+            },
+            created: function() {
+                this.$http.get('https://jsonplaceholder.typicode.com/albums').then((response) => {
+                    this.items = response.body
+                  }, (response) => {
+                    // error callback
+                  });
+            },
+            computed: {
+                itemsAsJSON: function() {
+                    return JSON.stringify(this.items)
+                }
+            },
+            watch: {
+                items: function () {
+                    console.log ('Change detected')
+                }
+            },
+            methods: {
+                appendItem: function() {
+                  var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000
+                  this.items.push({id: newId, title: 'New item ' + new Date()})
+                },
+                prependItem: function() {
+                    var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000
+                    this.items.unshift({id: newId, title: 'New item ' + new Date()})
+                },
+                deleteItem: function(index) {
+                    this.items.splice(index, 1)
+                },
+                reverseList: function() {
+                    this.items.reverse()
+                },
+                move: function(index, direction) {
+                    var tempObj;
+                    var offset;
+                    if (direction === 'up') {
+                        offset = -1
+                    } else {
+                        offset = 1
+                    }
+                    tempObj = this.items[index + offset]
+                    this.items.splice(index + offset, 1, this.items[index])
+                    this.items.splice(index, 1, tempObj)
+                },
+                prefixedId(id) {
+                    var s = "000000000" + id;
+                    s = s.substr(s.length-6);
+                    return 'I' + s;
+                }
+              }
+            });
+        </script>
+
+
+
+    </body>
+
+
+
+</html>
