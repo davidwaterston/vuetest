@@ -14,6 +14,7 @@
             <button @click="prependItem" class="btn">Prepend Item</button>
             <button @click="appendItem" class="btn">Append Item</button>
             <button @click="reverseList" class="btn">Reverse List</button>
+            {{items.length}}
         </span>
         <span v-else>
             {{filteredItems.length}} of {{items.length}}
@@ -22,22 +23,25 @@
         </span>
         </p>
         <table v-if="items.length > 0" class="table table-striped" style="width:80%">
-            <tr :id="prefixedId(item.id)" :title="item.id" :key="item.id" v-for="(item, index) in filteredItems">
-                <td>
-                    {{item.title}}
-                </td>
-                <template v-if="canEdit">
-	                <td width="30px">
-	                    <button v-if="index !== 0" @click="move(index, 'up')" class="btn">Move Up</button>
-	                </td>
-	                <td width="30px">
-	                    <button v-if="index !== items.length - 1" @click="move(index, 'down')" class="btn">Move Down</button>
-	                </td>
-	                <td width="30px">
-	                    <button @click="deleteItem(index)" class="btn">x</button>
-	                </td>
-                </template>
-            </tr>
+            <thead></thead>
+            <tbody>
+                <tr :id="prefixedId(item.id)" :title="item.id" :key="item.id" v-for="(item, index) in filteredItems">
+                    <td>
+                        {{item.title}}
+                    </td>
+                    <template v-if="canEdit">
+	                    <td width="30px">
+	                        <button v-if="index !== 0" @click="move(index, 'up')" class="btn">Move Up</button>
+	                    </td>
+	                    <td width="30px">
+	                        <button v-if="index !== items.length - 1" @click="move(index, 'down')" class="btn">Move Down</button>
+	                    </td>
+	                    <td width="30px">
+	                        <button @click="deleteItem(index)" class="btn">x</button>
+	                    </td>
+                    </template>
+                </tr>
+            </tbody>
         </table>
         <div v-else>
             <span v-if="dataLoaded">NONE<span>
@@ -109,7 +113,7 @@
                     this.items.splice(index + offset, 1, this.items[index]);
                     this.items.splice(index, 1, tempObj);
                 },
-                prefixedId(id) {
+                prefixedId: function(id) {
                     var s = "000000000" + id;
                     s = s.substr(s.length-6);
                     return 'I' + s;
