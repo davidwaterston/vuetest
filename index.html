@@ -71,6 +71,8 @@
                     var charsToGo = this.minLength - this.filterString.length;
                     if (charsToGo > 0) {
                         return 'Enter ' + charsToGo + ' more ' + (charsToGo === 1 ? 'character' : 'characters');
+                    } else {
+                        return '';
                     }
                }
             }
