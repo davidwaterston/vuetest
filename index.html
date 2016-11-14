@@ -20,6 +20,8 @@
             {{filteredItems.length}} of {{items.length}}
             </p>
             <input type="text" v-model="filterString" placeholder="Filter" />
+            </br>
+            <filter-feedback :filter-string="filterString" :min-length="filterMinLength"></filter-feedback>
         </span>
         </p>
         <table v-if="items.length > 0" class="table table-striped" style="width:80%">
@@ -50,12 +52,37 @@
     </div>
 
     <script>
+
+        Vue.component('filter-feedback', {
+            props: {
+                filterString: {
+                    type: String,
+                    required: true
+                },
+                minLength: {
+                    type: Number,
+                    required: false,
+                    default: 3
+               }
+            },
+            template: '<span style="color:#d3d3d3;font-style: italic">{{msg}}</span>',
+            computed: {
+                msg: function () {
+                    var charsToGo = this.minLength - this.filterString.length;
+                    if (charsToGo > 0) {
+                        return 'Enter ' + charsToGo + ' more ' + (charsToGo === 1 ? 'character' : 'characters');
+                    }
+               }
+            }
+        })
+
         var vm = new Vue({
             el: '#app',
             data: {
                 dataLoaded: false,
                 canEdit: true,
                 filterString: '',
+                filterMinLength: 3,
                 items: []
             },
             created: function() {
@@ -68,9 +95,10 @@
             },
             computed: {
                 filteredItems: function() {
+                    var self = this;
                     var filterString = this.filterString.toLowerCase();
                     return this.items.filter(function (item) {
-                        if (filterString.length < 3) {
+                        if (filterString.length < self.filterMinLength) {
                             return true;
                         } else {
                             return item.title.toLowerCase().indexOf(filterString) + 1;
