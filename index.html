@@ -21,7 +21,7 @@
             </p>
             <input type="text" v-model="filterString" placeholder="Filter" />
             </br>
-            <filter-feedback :filter-string="filterString" :min-length="filterMinLength"></filter-feedback>
+            <filter-feedback v-if="filterShowFeedback" :filter-string="filterString" :min-length="filterMinLength" />
         </span>
         </p>
         <table v-if="items.length > 0" class="table table-striped" style="width:80%">
@@ -85,6 +85,7 @@
                 canEdit: true,
                 filterString: '',
                 filterMinLength: 3,
+                filterShowFeedback: true,
                 items: []
             },
             created: function() {
