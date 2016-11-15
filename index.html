@@ -19,7 +19,7 @@
         <span v-else>
             {{filteredItems.length}} of {{items.length}}
             </p>
-            <input type="text" v-model="filterString" placeholder="Filter" />
+            <input type="text" v-model="filterString" placeholder="Filter" @keyup.esc="clearFilter" />
             </br>
             <filter-feedback v-if="filterShowFeedback" :filter-string="filterString" :min-length="filterMinLength" />
         </span>
@@ -33,10 +33,10 @@
                     </td>
                     <template v-if="canEdit">
 	                    <td width="30px">
-	                        <button v-if="index !== 0" @click="move(index, 'up')" class="btn">Move Up</button>
+	                        <button v-if="index !== 0" @click="moveItem(index, 'up')" class="btn">Move Up</button>
 	                    </td>
 	                    <td width="30px">
-	                        <button v-if="index !== items.length - 1" @click="move(index, 'down')" class="btn">Move Down</button>
+	                        <button v-if="index !== items.length - 1" @click="moveItem(index, 'down')" class="btn">Move Down</button>
 	                    </td>
 	                    <td width="30px">
 	                        <button @click="deleteItem(index)" class="btn">x</button>
@@ -132,7 +132,7 @@
                 reverseList: function() {
                     this.items.reverse();
                 },
-                move: function(index, direction) {
+                moveItem: function(index, direction) {
                     var tempObj;
                     var offset;
                     if (direction === 'up') {
@@ -143,6 +143,9 @@
                     tempObj = this.items[index + offset];
                     this.items.splice(index + offset, 1, this.items[index]);
                     this.items.splice(index, 1, tempObj);
+                },
+                clearFilter: function() {
+                    this.filterString = '';
                 },
                 prefixedId: function(id) {
                     var s = "000000000" + id;
