@@ -1,0 +1,107 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    </head>
+    <body style="margin:15px">
+
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+        <div id="app" style="width: 40%">
+            <simple-card :img="item.img"
+                         :title="fullName(item.firstName, item.lastName)"
+                         :description="item.description"
+                         v-for="item in items" />
+        </div>
+
+
+
+        <script>
+
+            Vue.component('simple-card', {
+                props: {
+                    img: {
+                        type: String,
+                        required: true
+                    },
+                    title: {
+                        type: String,
+                        required: true
+                    },
+                    description: {
+                        type: String,
+                        required: true
+                    }
+                },
+                template: '<div class="panel panel-default"> \
+                               <div class="panel-body"> \
+                                   <span class="pull-left"> \
+                                       <simple-image :img="this.img" /> \
+                                   </span> \
+                                   <div style="margin-left:100px"> \
+                                       <simple-title :title="this.title" /> \
+                                       <simple-description :text="this.description" /> \
+                                   </div> \
+                               </div> \
+                           </div>'
+            })
+
+            Vue.component('simple-title', {
+                props: {
+                    title: {
+                        type: String,
+                        required: true
+                    }
+                },
+                template: '<strong>{{this.title}}</strong>'
+            })
+
+            Vue.component('simple-image', {
+                props: {
+                    img: {
+                        type: String,
+                        required: true
+                    }
+                },
+                template: '<img :src="this.img" class="img-circle" />'
+            })
+
+            Vue.component('simple-description', {
+                props: {
+                    text: {
+                        type: String,
+                        required: true
+                    }
+                },
+                template: '<p>{{this.text}}</p>'
+            })
+
+
+
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    items: [
+                        {
+                            firstName: "David",
+                            lastName: "Waterston",
+                            img: "https://en.gravatar.com/userimage/213941/a49475dcbca3d486c971488a91b44e74.png",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce in lobortis turpis. Aliquam facilisis metus nec nibh auctor molestie. Etiam pretium bibendum."
+                        },
+                        {
+                            firstName: "Mark",
+                            lastName: "Anderson",
+                            img: "http://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802?d=identicon",
+                            description: "Morbi convallis imperdiet nisl, ut mollis enim faucibus at. Mauris varius fermentum erat, sit amet tincidunt leo faucibus et. Sed."
+                        }
+                    ]
+                },
+                methods: {
+                    fullName: function (firstName, lastName) {
+                        return firstName + ' ' + lastName;
+                    }
+                }
+            });
+        </script>
+
+</html>
