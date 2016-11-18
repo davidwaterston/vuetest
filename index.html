@@ -1,160 +1,39 @@
 <html>
     <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style>
+            ul {
+                margin-top: 20px
+            }
+            li {
+                margin-bottom: 20px
+            }
+        </style>
     </head>
     <body style="margin:15px">
 
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
-
-    <div id="app">
-        <button v-if="canEdit" @click="{{canEdit = false}}" class="btn">Filter Mode</button>
-        <button v-else @click="{{canEdit = true}}" class="btn">Edit Mode</button>
-        <span v-if="canEdit">
-            <button @click="prependItem" class="btn">Prepend Item</button>
-            <button @click="appendItem" class="btn">Append Item</button>
-            <button @click="reverseList" class="btn">Reverse List</button>
-            {{items.length}}
-        </span>
-        <span v-else>
-            {{filteredItems.length}} of {{items.length}}
-            </p>
-            <input type="text" v-model="filterString" placeholder="Filter" @keyup.esc="clearFilter" />
+        <h2>Vue.js examples</h2>
+        <p>
+            A small collection of simple experiments created when learning <a href="https://vuejs.org/">Vue.js</a>.
             </br>
-            <filter-feedback v-if="filterShowFeedback" :filter-string="filterString" :min-length="filterMinLength" />
-        </span>
+            Minimal effort made to make them look good and not in any way to be considered good examples of how things should be done!
         </p>
-        <table v-if="items.length > 0" class="table table-striped" style="width:80%">
-            <thead></thead>
-            <tbody>
-                <tr :id="prefixedId(item.id)" :title="item.id" :key="item.id" v-for="(item, index) in filteredItems">
-                    <td>
-                        {{item.title}}
-                    </td>
-                    <template v-if="canEdit">
-	                    <td width="30px">
-	                        <button v-if="index !== 0" @click="moveItem(index, 'up')" class="btn">Move Up</button>
-	                    </td>
-	                    <td width="30px">
-	                        <button v-if="index !== items.length - 1" @click="moveItem(index, 'down')" class="btn">Move Down</button>
-	                    </td>
-	                    <td width="30px">
-	                        <button @click="deleteItem(index)" class="btn">x</button>
-	                    </td>
-                    </template>
-                </tr>
-            </tbody>
-        </table>
-        <div v-else>
-            <span v-if="dataLoaded">NONE<span>
-        </div>
-        <input type="hidden" :value="itemsAsJSON">
-    </div>
 
-    <script>
+        <ol>
+            <li>
+                <strong><a href="simplecard.html">A simple repeating layout built using parent/child components</a></strong>
+                </br>
+                First attempt at creating parent/child components. Data props passed down through each level. No events.
+                </br>
+                4 components used: simple-title, simple-image, simple-description and a wrapper component simple-card.
+            </li>
+            <li>
+                <strong><a href="ajaxlist.html">Retrieve json-formatted data via Ajax, display and filter/move</a></strong>
+                </br>
+                Retrieves data via Ajax and displays it in a table format. Data can be filtered / re-ordered / added / deleted.
+            </li>
 
-        Vue.component('filter-feedback', {
-            props: {
-                filterString: {
-                    type: String,
-                    required: true
-                },
-                minLength: {
-                    type: Number,
-                    required: false,
-                    default: 3
-               }
-            },
-            template: '<span style="color:#d3d3d3;font-style: italic">{{msg}}</span>',
-            computed: {
-                msg: function () {
-                    var charsToGo = this.minLength - this.filterString.length;
-                    if (charsToGo > 0) {
-                        return 'Enter ' + charsToGo + ' more ' + (charsToGo === 1 ? 'character' : 'characters');
-                    } else {
-                        return '';
-                    }
-               }
-            }
-        })
-
-        var vm = new Vue({
-            el: '#app',
-            data: {
-                dataLoaded: false,
-                canEdit: true,
-                filterString: '',
-                filterMinLength: 3,
-                filterShowFeedback: true,
-                items: []
-            },
-            created: function() {
-                this.$http.get('https://jsonplaceholder.typicode.com/albums').then((response) => {
-                    this.items = response.body;
-                    dataLoaded = true;
-                  }, (response) => {
-                    // error callback
-                  });
-            },
-            computed: {
-                filteredItems: function() {
-                    var self = this;
-                    var filterString = this.filterString.toLowerCase();
-                    return this.items.filter(function (item) {
-                        if (filterString.length < self.filterMinLength) {
-                            return true;
-                        } else {
-                            return item.title.toLowerCase().indexOf(filterString) + 1;
-                        }
-                    })
-                },
-                itemsAsJSON: function() {
-                    return JSON.stringify(this.items);
-                }
-            },
-            watch: {
-                items: function () {
-                    console.log ('Change detected');
-                }
-            },
-            methods: {
-                appendItem: function() {
-                  var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000;
-                  this.items.push({id: newId, title: 'New item ' + new Date()});
-                },
-                prependItem: function() {
-                    var newId = Math.floor(Math.random() * (100000 - 1000)) + 1000;
-                    this.items.unshift({id: newId, title: 'New item ' + new Date()});
-                },
-                deleteItem: function(index) {
-                    this.items.splice(index, 1);
-                },
-                reverseList: function() {
-                    this.items.reverse();
-                },
-                moveItem: function(index, direction) {
-                    var tempObj;
-                    var offset;
-                    if (direction === 'up') {
-                        offset = -1;
-                    } else {
-                        offset = 1;
-                    }
-                    tempObj = this.items[index + offset];
-                    this.items.splice(index + offset, 1, this.items[index]);
-                    this.items.splice(index, 1, tempObj);
-                },
-                clearFilter: function() {
-                    this.filterString = '';
-                },
-                prefixedId: function(id) {
-                    var s = "000000000" + id;
-                    s = s.substr(s.length-6);
-                    return 'I' + s;
-                }
-              }
-            });
-        </script>
+        </ul>
 
     </body>
 </html>
