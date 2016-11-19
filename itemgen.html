@@ -1,0 +1,91 @@
+<html>
+
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <style>
+            ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <body style="margin:15px">
+
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+        <div id="app">
+
+            <button @click="updateListOfItems(1)" class="btn">Generate 1</button>
+            <button @click="updateListOfItems(5)" class="btn">Generate 5</button>
+            <button @click="updateListOfItems(10)" class="btn">Generate 10</button>
+            <button @click="updateListOfItems(100)" class="btn">Generate 100</button>
+            <button @click="updateListOfItems(1000)" class="btn">Generate 1000</button>
+            <button @click="refreshItems" class="btn">Refresh</button>
+            <button id="btnCopy" @click="copyItemsToClipboard" class="btn">Copy to Clipboard</button>
+            </br></br>
+
+            <ul>
+                <li v-for="item in generatedItems">{{item}}
+            </ul>
+
+            <textarea id="selectableItems" style="margin-top:-1000px">{{generatedItemsAsString}}</textarea>
+
+        </div>
+
+        <script>
+
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    generatedItems: []
+                },
+                created: function() {
+                    this.addItems(1);
+                },
+                computed: {
+                    generatedItemsAsString: function() {
+                        return this.generatedItems.join('\n');
+                    }
+                },
+                methods: {
+                    generateItem: function() {
+                      var newItem = Math.floor(Math.random() * (100000 - 1000)) + 1000;
+                      return newItem;
+                    },
+                    updateListOfItems: function(howManyItemsReqd) {
+                        if (howManyItemsReqd < this.generatedItems.length) {
+                            this.removeItems(howManyItemsReqd);
+                        } else {
+                            this.addItems(howManyItemsReqd);
+                        }
+                    },
+                    addItems: function(howManyItemsReqd) {
+                      for (var ctr = this.generatedItems.length; ctr < howManyItemsReqd; ctr++) {
+                          this.generatedItems.push(this.generateItem());
+                      };
+                    },
+                    removeItems: function(howManyItemsReqd) {
+                        this.generatedItems.splice((this.generatedItems.length - howManyItemsReqd) * -1);
+                    },
+                    refreshItems: function() {
+                        var itemsReqd = this.generatedItems.length;
+                        this.generatedItems = [];
+                        this.addItems(itemsReqd);
+                    },
+                    copyItemsToClipboard: function() {
+                        var toCopy = document.getElementById('selectableItems');
+                        toCopy.select();
+                        document.execCommand("copy");
+                        document.getElementById('btnCopy').focus()
+                    }
+                }
+            });
+
+        </script>
+
+    </body>
+
+</html>
