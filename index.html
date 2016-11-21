@@ -38,6 +38,12 @@
                 Work-in-progress for a larger project. This templates displays a list of 'items' (presently just random numbers, as the content is not important for getting this functionality to work). More items can be added and existing ones removed from the list or the list completely refreshed. The list may also be copied to the clipboard.</br>
                 One peculiarity: if e.g. 5 items are in the list and the 'Generate 10 Items' button is pressed then 5 new items are added i.e. the original 5 still remain. Similarly, clicking 'Generate 1 Item' would remove all but the original 1st item.
             </li>
+            <li>
+                <strong><a href="cuidgen.html">Generate a list of CUIDs and allow it to be copied to the clipboard</a></strong>
+                </br>
+                Work-in-progress for a larger project. This is based on the previous example but it now generates CUIDs instead of random numbers. To do this it uses the in-browser version of <a href="https://github.com/ericelliott/cuid">Eric Elliott's library</a>.<br/>
+                From a Vue.js point-of-view there is not much difference between this and the previous version except that the buttons are now disabled when clicked. <br/>This doesn't make a lot of sense with the current interface but might when the layout is changed.
+            </li>
         </ul>
 
     </body>

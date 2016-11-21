@@ -1,0 +1,104 @@
+<html>
+
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <style>
+            ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <body style="margin:15px">
+
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<script src="cuid.js"></script>
+
+        <div id="app">
+
+            <button @click="updateListOfCUIDs(1)" class="btn" :disabled="btnDisabled(1)">Generate 1</button>
+            <button @click="updateListOfCUIDs(5)" class="btn" :disabled="btnDisabled(5)">Generate 5</button>
+            <button @click="updateListOfCUIDs(10)" class="btn":disabled="btnDisabled(10)">Generate 10</button>
+            <button @click="updateListOfCUIDs(100)" class="btn" :disabled="btnDisabled(100)">Generate 100</button>
+            <button @click="updateListOfCUIDs(1000)" class="btn" :disabled="btnDisabled(1000)">Generate 1000</button>
+            <button @click="refreshCUIDs" class="btn">Refresh</button>
+            <button v-if="copyAvailable" id="btnCopy" @click="copyCUIDsToClipboard" class="btn">Copy to Clipboard</button>
+            </br></br>
+
+            <ul>
+                <li v-for="cuid in generatedCUIDs">{{cuid}}
+            </ul>
+
+            <textarea v-if="copyAvailable" id="selectableCUIDs" style="margin-top:-1000px">{{generatedCUIDsAsString}}</textarea>
+
+        </div>
+
+        <script>
+
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    generatedCUIDs: [],
+                    copyAvailable: false
+                },
+                created: function() {
+                    var browser = navigator.userAgent.match(/(Firefox|Chrome)\/(\d+)/);
+                    this.copyAvailable = 'execCommand' in document && !!(browser && {
+                        Firefox: parseInt(browser[2], 10) >= 41,
+                        Chrome: parseInt(browser[2], 10) >= 43
+                    }[browser[1]]);
+                    this.addCUIDs(1);
+                },
+                computed: {
+                    generatedCUIDsAsString: function() {
+                        return this.generatedCUIDs.join('\n');
+                    }
+                },
+                methods: {
+                    generateCUID: function() {
+                      return cuid();
+                    },
+                    updateListOfCUIDs: function(howManyCUIDsReqd) {
+                        if (howManyCUIDsReqd < this.generatedCUIDs.length) {
+                            this.removeCUIDs(howManyCUIDsReqd);
+                        } else {
+                            this.addCUIDs(howManyCUIDsReqd);
+                        }
+                    },
+                    addCUIDs: function(howManyCUIDsReqd) {
+                      for (var ctr = this.generatedCUIDs.length; ctr < howManyCUIDsReqd; ctr++) {
+                          this.generatedCUIDs.push(this.generateCUID());
+                      };
+                    },
+                    removeCUIDs: function(howManyCUIDsReqd) {
+                        this.generatedCUIDs.splice((this.generatedCUIDs.length - howManyCUIDsReqd) * -1);
+                    },
+                    refreshCUIDs: function() {
+                        var cuidsReqd = this.generatedCUIDs.length;
+                        this.generatedCUIDs = [];
+                        this.addCUIDs(cuidsReqd);
+                    },
+                    copyCUIDsToClipboard: function() {
+                        var toCopy = document.getElementById('selectableCUIDs');
+                        toCopy.select();
+                        document.execCommand("copy");
+                        document.getElementById('btnCopy').focus()
+                    },
+                    btnDisabled(noOfCUIDs) {
+                        if (noOfCUIDs === this.generatedCUIDs.length) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                   }
+                }
+            });
+
+        </script>
+
+    </body>
+
+</html>
