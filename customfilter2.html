@@ -5,14 +5,20 @@
 
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
 
-    <div id="app">
-        <ul>
-            <li v-for="item in items">{{item.code}}: {{ item.title | cleanTitle}}
-        </ul>
-    </div>
+        <div id="app">
+            <h2>Using custom filter</h2>
+            <ul>
+                <li v-for="item in items">{{item.code}}: {{ item.title | cleanTitle }}
+            </ul>
+
+            <h2>Using method</h2>
+            <ul>
+                <li v-for="item in items">{{item.code}}: {{ cleanupTitle(item.title) }}
+            </ul>
+        </div>
 
 
-    <script>
+        <script>
 
         Vue.filter('cleanTitle', function(title) {
             if (title.length === 0) {
@@ -39,6 +45,15 @@
                         title: "This is title 3"
                     }
                 ]
+            },
+            methods: {
+                cleanupTitle: function(title) {
+                    if (title.length === 0) {
+                        return 'NO TITLE SUPPLIED';
+                    } else {
+                        return title.toUpperCase();
+                    }
+                }
             }
         });
     </script>
