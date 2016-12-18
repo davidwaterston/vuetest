@@ -40,9 +40,7 @@
     </template>
 
     <template id="simple-description-template">
-        <p>
-            {{this.text}}
-        </p>
+        <p v-html="this.text"></p>
     </template>
 
 
@@ -106,7 +104,7 @@
                         firstName: "David",
                         lastName: "Waterston",
                         img: "https://en.gravatar.com/userimage/213941/a49475dcbca3d486c971488a91b44e74.png",
-                        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce in lobortis turpis. Aliquam facilisis metus nec nibh auctor molestie. Etiam pretium bibendum."
+                        description: "Lorem ipsum dolor sit amet, <b>consectetur adipiscing elit</b>. Fusce in lobortis turpis. Aliquam facilisis metus nec nibh auctor molestie. Etiam pretium bibendum."
                     },
                     {
                         firstName: "Mark",
