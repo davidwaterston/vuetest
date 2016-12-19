@@ -69,7 +69,7 @@
             template: '#simple-card-template',
             methods: {
                 liked: function () {
-                    alert('LIKE clicked in child component');
+                    alert('LIKE clicked in child component for ' + this.title);
                 }
             }
         })
@@ -108,7 +108,7 @@
             template: '#simple-actionbar-template',
             methods: {
                 like: function () {
-                    this.$emit('liked', this);
+                    this.$emit('liked');
                 }
             }
         })
