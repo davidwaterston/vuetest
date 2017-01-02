@@ -1,14 +1,18 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style>
+            [v-cloak] {
+                display: none;
+            }
+        </style>
     </head>
     <body style="margin:15px">
 
         <script src="https://unpkg.com/vue/dist/vue.js"></script>
-        <script src="https://unpkg.com/vue-resource@1.0.3/dist/vue-resource.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-
-        <div id="app">
+        <div id="app" v-cloak>
             <button v-if="canEdit" @click="{{canEdit = false}}" class="btn">Filter Mode</button>
             <button v-else @click="{{canEdit = true}}" class="btn">Edit Mode</button>
             <span v-if="canEdit">
@@ -96,12 +100,15 @@
                     items: []
                 },
                 created: function() {
-                    this.$http.get('https://jsonplaceholder.typicode.com/albums').then((response) => {
-                        this.items = response.body;
-                        dataLoaded = true;
-                      }, (response) => {
-                        // error callback
-                      });
+                    var self = this;
+                    axios.get('https://jsonplaceholder.typicode.com/albums')
+                        .then(function (response) {
+                            self.items = response.data;
+                            self.dataLoaded = true;
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 },
                 computed: {
                     filteredItems: function() {
